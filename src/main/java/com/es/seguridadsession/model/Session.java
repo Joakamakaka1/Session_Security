@@ -49,19 +49,23 @@ public class Session {
         this.token = token;
     }
 
-    public LocalDateTime getExpirationDate() {
-        return expirationDate;
-    }
-
     public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Usuario getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expirationDate);
     }
 }

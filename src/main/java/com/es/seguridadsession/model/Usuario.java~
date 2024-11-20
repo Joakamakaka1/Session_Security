@@ -1,6 +1,5 @@
 package com.es.seguridadsession.model;
 
-import com.es.seguridadsession.utils.PasswordHashUtil;
 import jakarta.persistence.*;
 
 @Entity

@@ -16,7 +16,7 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private Mapper mapper;
+    Mapper mapper;
 
     public ProductoDTO getById(String id) {
         try{

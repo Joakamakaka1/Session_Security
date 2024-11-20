@@ -16,28 +16,20 @@ public class RutaProtegidaController {
     private SessionService sessionService;
 
     @PostMapping("/")
-    public String rutaProtegida(
-            HttpServletRequest request
-    ) {
+    public String rutaProtegida(HttpServletRequest request) {
 
-        // Tenemos que obtener la cookie -> y de la cookie vamos a obtener el tokenSession
         String token = "";
-        for(Cookie cookie: request.getCookies()) {
-            if(cookie.getName().equals("tokenSession")) {
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals("tokenSession")) {
                 token = cookie.getValue();
-
             }
         }
 
-        System.out.println("Token: "+token);
-        // Una vez tenemos el tokenSession
+        System.out.println("Token: " + token);
         if (sessionService.checkToken(token)) {
             return "RECURSO SUPER IMPORTANTE";
         } else {
             return "NO TIENES ACCESO";
         }
-
-
-
     }
 }

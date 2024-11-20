@@ -76,4 +76,42 @@ public class UsuarioService {
             throw e;
         }
     }
+
+    public String getRoleFromToken(String token) {
+        try {
+            Session session = sessionRepository.findByToken(token)
+                    .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+
+            if (session.isExpired()) {
+                throw new IllegalArgumentException("Token expirado");
+            }
+
+            // Validar el token desencriptándolo (opcional para mayor control)
+            String decryptedData = AESUtil.decrypt(token);
+            if (!decryptedData.contains(":clave_secreta")) {
+                throw new IllegalArgumentException("Token no válido");
+            }
+
+            return session.getUsuario().getRol();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al validar el token: " + e.getMessage());
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Session session = sessionRepository.findByToken(token)
+                    .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+
+            if (session.isExpired()) {
+                throw new IllegalArgumentException("Token expirado");
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al validar el token: " + e.getMessage());
+        }
+    }
+
+
 }

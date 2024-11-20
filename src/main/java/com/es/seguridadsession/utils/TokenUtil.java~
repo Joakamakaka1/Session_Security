@@ -18,7 +18,7 @@ public class TokenUtil {
         return null;
     }
 
-    public String extractTokenFromCookies(HttpServletRequest request) {
+    private String extractTokenFromCookies(HttpServletRequest request) {
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("tokenSession")) {
                 return cookie.getValue();

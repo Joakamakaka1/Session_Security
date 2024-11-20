@@ -2,15 +2,14 @@ package com.es.seguridadsession.controller;
 
 import com.es.seguridadsession.dto.ProductoDTO;
 import com.es.seguridadsession.service.ProductoService;
+import com.es.seguridadsession.service.SessionService;
+import com.es.seguridadsession.service.UsuarioService;
+import com.es.seguridadsession.utils.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-/**
- * CLASE CONTROLLER DE PRODUCTOS
- * ESTOS RECURSOS ESTÁN PROTEGIDOS, Y SÓLO SE PUEDE ACCEDER AQUÍ SI EL USUARIO TIENE UNA SESSION ACTIVA
- */
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
@@ -18,35 +17,54 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
+    @Autowired
+    private UsuarioService usuarioService;
 
-    /**
-     * GET PRODUCTO POR SU ID
-     * A este método pueden acceder todo tipo de usuarios
-     * tanto los que tengan ROL USER como los que tengan ROL ADMIN
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTO> getById(
-            @PathVariable String id
-    ) {
-        // TODO
-        return null;
+    @Autowired
+    private TokenUtil tokenUtils;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @GetMapping("/{id}") // -> http://localhost:8080/productos
+    public ResponseEntity<ProductoDTO> getById(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String token = tokenUtils.extractTokenFromCookies(request);
+            if (!sessionService.checkToken(token)) {
+                return ResponseEntity.status(401).build();
+            }
+
+            String role = sessionService.getRoleFromToken(token);
+            if (!role.equals("User") && !role.equals("Admin")) {
+                return ResponseEntity.status(403).build();
+            }
+
+            ProductoDTO producto = productoService.getById(id);
+            return ResponseEntity.ok(producto);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body(null);
+        }
     }
 
-    /**
-     * INSERTAR PRODUCTO
-     * A este método sólo pueden acceder los usuarios que tengan ROL ADMIN
-     * @param productoDTO
-     * @return
-     */
-    @PostMapping("/")
-    public ResponseEntity<ProductoDTO> insert(
-            @RequestBody ProductoDTO productoDTO
-    ) {
-        // TODO
-        return null;
+    @PostMapping("/") // -> http://localhost:8080/productos
+    public ResponseEntity<ProductoDTO> insert(@RequestBody ProductoDTO productoDTO, HttpServletRequest request) {
+        try {
+            String token = tokenUtils.extractTokenFromCookies(request);
+            if (!sessionService.checkToken(token)) {
+                return ResponseEntity.status(401).build();
+            }
+
+            String role = sessionService.getRoleFromToken(token);
+            if (!role.equals("Admin")) {
+                return ResponseEntity.status(403).build();
+            }
+
+            ProductoDTO producto = productoService.insert(productoDTO);
+            return ResponseEntity.ok(producto);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body(null);
+        }
     }
-
-
 }

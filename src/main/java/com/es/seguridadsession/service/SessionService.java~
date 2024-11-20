@@ -34,15 +34,4 @@ public class SessionService {
             throw new RuntimeException("Error al validar el token: " + e.getMessage());
         }
     }
-
-    public String getRoleFromToken(String token) {
-        Session session = sessionRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
-
-        if (session.isExpired()) {
-            throw new IllegalArgumentException("Token expirado");
-        }
-
-        return session.getUsuario().getRol();
-    }
 }

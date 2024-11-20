@@ -48,12 +48,4 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    /*
-    {
-        "nombre": "admin",
-        "password": "admin",
-        "rol": "admin"
-    }
-     */
 }
