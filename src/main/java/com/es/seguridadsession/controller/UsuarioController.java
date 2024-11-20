@@ -15,13 +15,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Usuario controller.
+ */
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
-
     @Autowired
     private UsuarioService usuarioService;
 
+    /**
+     * Login response entity.
+     *
+     * @param userLogin the user login
+     * @param response  the response
+     * @return the response entity
+     */
     @PostMapping("/login") // -> http://localhost:8080/usuarios/login
     public ResponseEntity<?> login(@RequestBody UsuarioDTO userLogin, HttpServletResponse response) {
         try {
@@ -44,6 +53,12 @@ public class UsuarioController {
         }
     }
 
+    /**
+     * Insert response entity.
+     *
+     * @param nuevoUser the nuevo user
+     * @return the response entity
+     */
     @PostMapping("/") // -> http://localhost:8080/usuarios
     public ResponseEntity<?> insert(@RequestBody UsuarioInsertDTO nuevoUser) {
         try {

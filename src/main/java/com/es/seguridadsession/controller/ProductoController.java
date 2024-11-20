@@ -14,22 +14,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Producto controller.
+ */
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
-
     @Autowired
     private ProductoService productoService;
-
     @Autowired
     private UsuarioService usuarioService;
-
     @Autowired
     private TokenUtil tokenUtils;
-
     @Autowired
     private SessionService sessionService;
 
+    /**
+     * Gets by id.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the by id
+     */
     @GetMapping("/{id}") // -> http://localhost:8080/productos
     public ResponseEntity<?> getById(@PathVariable String id, HttpServletRequest request) {
         try {
@@ -54,6 +60,13 @@ public class ProductoController {
         }
     }
 
+    /**
+     * Insert response entity.
+     *
+     * @param productoDTO the producto dto
+     * @param request     the request
+     * @return the response entity
+     */
     @PostMapping("/") // -> http://localhost:8080/productos
     public ResponseEntity<?> insert(@RequestBody ProductoDTO productoDTO, HttpServletRequest request) {
         try {

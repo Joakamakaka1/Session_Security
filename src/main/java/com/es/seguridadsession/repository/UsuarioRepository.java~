@@ -5,18 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-/**
- * The interface Usuario repository.
- */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    /**
-     * Find by nombre list.
-     *
-     * @param nombre the nombre
-     * @return the list
-     */
     List<Usuario> findByNombre(String nombre);
 
 }

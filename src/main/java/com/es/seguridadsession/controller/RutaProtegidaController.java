@@ -12,14 +12,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The type Ruta protegida controller.
+ */
 @RestController
 @RequestMapping("/rutaProtegida")
 public class RutaProtegidaController {
-
     @Autowired
     private SessionService sessionService;
 
-    @PostMapping("/")
+    /**
+     * Ruta protegida response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
+    @PostMapping("/") // -> http://localhost:8080/rutaProtegida
     public ResponseEntity<?> rutaProtegida(HttpServletRequest request) {
         String token = "";
         for (Cookie cookie : request.getCookies()) {

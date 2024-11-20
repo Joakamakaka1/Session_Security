@@ -10,15 +10,22 @@ import com.es.seguridadsession.utils.StringToLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The type Producto service.
+ */
 @Service
 public class ProductoService {
-
     @Autowired
     private ProductoRepository productoRepository;
-
     @Autowired
     private Mapper mapper;
 
+    /**
+     * Gets by id.
+     *
+     * @param id the id
+     * @return the by id
+     */
     public ProductoDTO getById(String id) {
         try{
             if(id == null) {
@@ -35,6 +42,12 @@ public class ProductoService {
         }
     }
 
+    /**
+     * Insert producto dto.
+     *
+     * @param productoDTO the producto dto
+     * @return the producto dto
+     */
     public ProductoDTO insert(ProductoDTO productoDTO) {
         try {
             if(productoDTO == null) {

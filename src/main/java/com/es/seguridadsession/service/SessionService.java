@@ -11,12 +11,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Session service.
+ */
 @Service
 public class SessionService {
-
     @Autowired
     private SessionRepository sessionRepository;
 
+    /**
+     * Check token boolean.
+     *
+     * @param token the token
+     * @return the boolean
+     */
     public boolean checkToken(String token) {
         try {
             Session session = sessionRepository.findByToken(token)// Buscar la sesión por token
@@ -37,6 +45,12 @@ public class SessionService {
         }
     }
 
+    /**
+     * Gets role from token.
+     *
+     * @param token the token
+     * @return the role from token
+     */
     public String getRoleFromToken(String token) {
         try {
             Session session = sessionRepository.findByToken(token)

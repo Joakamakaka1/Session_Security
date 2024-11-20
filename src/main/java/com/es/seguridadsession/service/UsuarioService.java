@@ -17,17 +17,24 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Usuario service.
+ */
 @Service
 public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private SessionRepository sessionRepository;
-
     @Autowired
     private Mapper mapper;
 
+    /**
+     * Login string.
+     *
+     * @param userLogin the user login
+     * @return the string
+     */
     public String login(UsuarioDTO userLogin) {
         String nombreUser = userLogin.getNombre();
         String passUser = userLogin.getPassword();
@@ -60,6 +67,12 @@ public class UsuarioService {
         }
     }
 
+    /**
+     * Insert usuario insert dto.
+     *
+     * @param nuevoUser the nuevo user
+     * @return the usuario insert dto
+     */
     public UsuarioInsertDTO insert(UsuarioInsertDTO nuevoUser) {
         if (nuevoUser == null) {
             throw new BadRequestException("El usuario no puede ser nulo");
