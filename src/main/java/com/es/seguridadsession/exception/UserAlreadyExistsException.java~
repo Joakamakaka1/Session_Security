@@ -1,0 +1,8 @@
+package com.es.seguridadsession.exception;
+
+public class UserAlreadyExistsException extends RuntimeException{
+    private static final String DESCRIPCION = "User already exists (409)";
+    public UserAlreadyExistsException(String msg) {
+        super(DESCRIPCION + ": " + msg);
+    }
+}

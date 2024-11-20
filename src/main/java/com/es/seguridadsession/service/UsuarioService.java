@@ -2,6 +2,9 @@ package com.es.seguridadsession.service;
 
 import com.es.seguridadsession.dto.UsuarioDTO;
 import com.es.seguridadsession.dto.UsuarioInsertDTO;
+import com.es.seguridadsession.exception.BadRequestException;
+import com.es.seguridadsession.exception.GenericException;
+import com.es.seguridadsession.exception.ResourceNotFoundException;
 import com.es.seguridadsession.model.Session;
 import com.es.seguridadsession.model.Usuario;
 import com.es.seguridadsession.repository.SessionRepository;
@@ -29,19 +32,21 @@ public class UsuarioService {
         String nombreUser = userLogin.getNombre();
         String passUser = userLogin.getPassword();
 
+        if(nombreUser == null || passUser == null) {
+            throw new BadRequestException("El nombre de usuario y la contraseña no pueden ser nulos");
+        }
+
         Usuario usuario = usuarioRepository.findByNombre(nombreUser)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("El usuario no existe"));
 
         if (!PasswordHashUtil.checkPassword(passUser, usuario.getPassword())) {
-            throw new IllegalArgumentException("Contraseña incorrecta");
+            throw new BadRequestException("Contraseña incorrecta");
         }
 
         try {
-            // Generar token cifrado
-            String token = AESUtil.encrypt(nombreUser + ":claveSecreta");
-            System.out.println("Token generado: " + token);
+            String token = AESUtil.encrypt(nombreUser + ":claveSecreta"); // Generar token cifrado
 
             Session session = new Session();
             session.setToken(token);
@@ -51,29 +56,29 @@ public class UsuarioService {
             sessionRepository.save(session);
             return token;
         } catch (Exception e) {
-            throw new RuntimeException("Error al generar el token", e);
+            throw new GenericException("Error al generar el token" + e.getMessage());
         }
     }
 
     public UsuarioInsertDTO insert(UsuarioInsertDTO nuevoUser) {
+        if (nuevoUser == null) {
+            throw new BadRequestException("El usuario no puede ser nulo");
+        }
+
+        if (!nuevoUser.getPassword1().equals(nuevoUser.getPassword2())) { // Verificar si las contraseñas coinciden
+            throw new BadRequestException("Las contraseñas no coinciden");
+        }
+
+        if (!nuevoUser.getRol().equals("admin") && !nuevoUser.getRol().equals("user")) { // Verificar si el rol es válido
+            throw new BadRequestException("El rol debe ser admin o user");
+        }
+
         try{
-            if(nuevoUser == null) {
-                throw new IllegalArgumentException("El usuario no puede ser nulo");
-            }
-
-            if(!nuevoUser.getPassword1().equals(nuevoUser.getPassword2())) {
-                throw new IllegalArgumentException("Las contraseñas no coinciden");
-            }
-
-            if(!nuevoUser.getRol().equals("admin") && !nuevoUser.getRol().equals("user")) {
-                throw new IllegalArgumentException("El rol debe ser admin o user");
-            }
-
             Usuario user = mapper.toUsuario(nuevoUser);
             user = usuarioRepository.save(user);
             return mapper.toUsuarioDTO(user);
-        }catch (Exception e) {
-            throw e;
+        } catch (Exception e) {
+            throw new GenericException("Error al crear el usuario" + e.getMessage());
         }
     }
 }

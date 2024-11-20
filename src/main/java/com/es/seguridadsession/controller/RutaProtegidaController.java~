@@ -21,6 +21,7 @@ public class RutaProtegidaController {
 
     @PostMapping("/")
     public ResponseEntity<?> rutaProtegida(HttpServletRequest request) {
+
         String token = "";
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("tokenSession")) {
@@ -32,6 +33,7 @@ public class RutaProtegidaController {
             if (!sessionService.checkToken(token)) {
                 throw new UnauthorizedAccessException("Token inválido o expirado");
             }
+
             return new ResponseEntity<>("RECURSO SUPER IMPORTANTE", HttpStatus.OK);
         } catch (UnauthorizedAccessException e) {
             ErrorMsgForClient error = new ErrorMsgForClient(e.getMessage(), "/rutaProtegida");

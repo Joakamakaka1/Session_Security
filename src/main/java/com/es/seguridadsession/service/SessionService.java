@@ -1,5 +1,8 @@
 package com.es.seguridadsession.service;
 
+import com.es.seguridadsession.exception.BadRequestException;
+import com.es.seguridadsession.exception.GenericException;
+import com.es.seguridadsession.exception.UnauthorizedAccessException;
 import com.es.seguridadsession.model.Session;
 import com.es.seguridadsession.repository.SessionRepository;
 import com.es.seguridadsession.utils.AESUtil;
@@ -17,32 +20,35 @@ public class SessionService {
     public boolean checkToken(String token) {
         try {
             Session session = sessionRepository.findByToken(token)// Buscar la sesión por token
-                    .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+                    .orElseThrow(() -> new BadRequestException("Token inválido"));
 
             if (LocalDateTime.now().isAfter(session.getExpirationDate())) { // Verificar si ha expirado
-                throw new IllegalArgumentException("Token expirado");
+                throw new UnauthorizedAccessException("Token expirado");
             }
 
-            // Desencriptar el token y validar el formato
-            String decryptedData = AESUtil.decrypt(token);
+            String decryptedData = AESUtil.decrypt(token); // Desencriptar el token y validar el formato
             if (!decryptedData.contains(":clave_secreta")) {
-                throw new IllegalArgumentException("El formato de token no válido");
+                throw new BadRequestException("El formato de token no válido");
             }
 
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Error al validar el token: " + e.getMessage());
+            throw new GenericException("Error al validar el token" + e.getMessage());
         }
     }
 
     public String getRoleFromToken(String token) {
-        Session session = sessionRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
+        try {
+            Session session = sessionRepository.findByToken(token)
+                    .orElseThrow(() -> new BadRequestException("Token inválido"));
 
-        if (session.isExpired()) {
-            throw new IllegalArgumentException("Token expirado");
+            if (session.isExpired()) {
+                throw new UnauthorizedAccessException("Token expirado");
+            }
+
+            return session.getUsuario().getRol();
+        } catch (Exception e) {
+            throw new GenericException("Error al obtener el rol" + e.getMessage());
         }
-
-        return session.getUsuario().getRol();
     }
 }
