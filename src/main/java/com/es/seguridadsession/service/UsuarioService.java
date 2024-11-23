@@ -28,6 +28,8 @@ public class UsuarioService {
     private SessionRepository sessionRepository;
     @Autowired
     private Mapper mapper;
+    @Autowired
+    private AESUtil aesUtil;
 
     /**
      * Login string.
@@ -53,7 +55,7 @@ public class UsuarioService {
         }
 
         try {
-            String token = AESUtil.encrypt(nombreUser + ":claveSecreta"); // Generar token cifrado
+            String token = aesUtil.encrypt(nombreUser + ":claveSecreta"); // Generar token cifrado
 
             Session session = new Session();
             session.setToken(token);
@@ -73,25 +75,30 @@ public class UsuarioService {
      * @param nuevoUser the nuevo user
      * @return the usuario insert dto
      */
-    public UsuarioInsertDTO insert(UsuarioInsertDTO nuevoUser) {
+    public UsuarioDTO insert(UsuarioInsertDTO nuevoUser) {
         if (nuevoUser == null) {
             throw new BadRequestException("El usuario no puede ser nulo");
         }
 
-        if (!nuevoUser.getPassword1().equals(nuevoUser.getPassword2())) { // Verificar si las contraseñas coinciden
+        if (!nuevoUser.getPassword1().equals(nuevoUser.getPassword2())) {
             throw new BadRequestException("Las contraseñas no coinciden");
         }
 
-        if (!nuevoUser.getRol().equals("admin") && !nuevoUser.getRol().equals("user")) { // Verificar si el rol es válido
+        if (!nuevoUser.getRol().equals("admin") && !nuevoUser.getRol().equals("user")) {
             throw new BadRequestException("El rol debe ser admin o user");
         }
 
-        try{
-            Usuario user = mapper.toUsuario(nuevoUser);
+        try {
+            Usuario user = mapper.toUsuario(nuevoUser);  // Convertir el DTO a una entidad Usuario
+
+            if (user.getRol() == null || user.getRol().isEmpty()) {
+                throw new BadRequestException("El rol no puede ser nulo o vacío");
+            }
+
             user = usuarioRepository.save(user);
-            return mapper.toUsuarioDTO(user);
+            return mapper.toUsuarioDTO(user);// Retorna el DTO del usuario sin la contraseña2
         } catch (Exception e) {
-            throw new GenericException("Error al crear el usuario" + e.getMessage());
+            throw new GenericException("Error al crear el usuario: " + e.getMessage());
         }
     }
 }

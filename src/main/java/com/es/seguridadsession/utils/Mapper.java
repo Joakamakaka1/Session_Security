@@ -1,6 +1,7 @@
 package com.es.seguridadsession.utils;
 
 import com.es.seguridadsession.dto.ProductoDTO;
+import com.es.seguridadsession.dto.UsuarioDTO;
 import com.es.seguridadsession.dto.UsuarioInsertDTO;
 import com.es.seguridadsession.model.Producto;
 import com.es.seguridadsession.model.Usuario;
@@ -40,19 +41,6 @@ public class Mapper {
     }
 
     /**
-     * To usuario dto usuario insert dto.
-     *
-     * @param user the user
-     * @return the usuario insert dto
-     */
-    public UsuarioInsertDTO toUsuarioDTO(Usuario user) {
-        UsuarioInsertDTO userDTO = new UsuarioInsertDTO();
-        userDTO.setNombre(user.getNombre());
-        userDTO.setPassword1(user.getPassword());
-        return userDTO;
-    }
-
-    /**
      * To usuario usuario.
      *
      * @param userDTO the user dto
@@ -62,6 +50,20 @@ public class Mapper {
         Usuario user = new Usuario();
         user.setNombre(userDTO.getNombre());
         user.setPassword(userDTO.getPassword1());
+        user.setRol(userDTO.getRol());
         return user;
+    }
+
+    /**
+     * To usuario dto usuario dto.
+     *
+     * @param user the user
+     * @return the usuario dto
+     */
+    public UsuarioDTO toUsuarioDTO(Usuario user) {
+        UsuarioDTO userDTO = new UsuarioDTO();
+        userDTO.setNombre(user.getNombre());
+        userDTO.setPassword(user.getPassword());
+        return userDTO;
     }
 }

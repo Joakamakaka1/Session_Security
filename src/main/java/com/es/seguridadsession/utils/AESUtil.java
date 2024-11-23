@@ -1,44 +1,49 @@
 package com.es.seguridadsession.utils;
 
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
  * The type Aes util.
  */
+@Component
 public class AESUtil {
     private static final String ALGORITHM = "AES";
-    private static final byte[] SECRET_KEY = "MySecretAESKey123".getBytes(); // Clave secreta de 16 bytes
+    private static final String SECRET_KEY = "claveSuperSecreta"; // 16 caracteres
 
     /**
      * Encrypt string.
      *
-     * @param data the data
+     * @param nombreUsuario the nombre usuario
      * @return the string
      * @throws Exception the exception
      */
-    public static String encrypt(String data) throws Exception {
-        SecretKey key = new SecretKeySpec(SECRET_KEY, ALGORITHM);
+    public String encrypt(String nombreUsuario) throws Exception {
+        String tokenSinCifrar = nombreUsuario+SECRET_KEY;
+
+        SecretKeySpec secretKeySpec = new SecretKeySpec(Arrays.copyOf(SECRET_KEY.getBytes(),16), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encrypted = cipher.doFinal(data.getBytes());
-        return Base64.getEncoder().encodeToString(encrypted);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        byte[] tokenCifrado = cipher.doFinal(tokenSinCifrar.getBytes());
+        return Base64.getEncoder().encodeToString(tokenCifrado);
     }
 
     /**
      * Decrypt string.
      *
-     * @param encryptedData the encrypted data
+     * @param tokenCifrado the token cifrado
      * @return the string
      * @throws Exception the exception
      */
-    public static String decrypt(String encryptedData) throws Exception {
-        SecretKey key = new SecretKeySpec(SECRET_KEY, ALGORITHM);
+    public String decrypt(String tokenCifrado) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(Arrays.copyOf(SECRET_KEY.getBytes(),16), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] original = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
-        return new String(original);
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+        byte[] tokenDescifrado = cipher.doFinal(Base64.getDecoder().decode(tokenCifrado));
+        return new String(tokenDescifrado);
     }
 }

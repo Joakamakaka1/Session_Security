@@ -12,8 +12,9 @@ public class UsuarioDTO {
      *
      * @param nombre    the nombre
      * @param password1 the password 1
+     * @param password2 the password 2
      */
-    public UsuarioDTO(String nombre, String password1) {
+    public UsuarioDTO(String nombre, String password1, String password2) {
         this.nombre = nombre;
         this.password = password1;
     }

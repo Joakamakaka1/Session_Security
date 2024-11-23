@@ -18,6 +18,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
      * @param token the token
      * @return the optional
      */
-    @Query("SELECT s FROM Session s WHERE s.token = ?1 ORDER BY s.expirationDate DESC LIMIT 1")
+    @Query("SELECT s FROM Session s WHERE s.token = ?1 ORDER BY s.id DESC LIMIT 1")
     Optional<Session> findByToken(String token);
 }

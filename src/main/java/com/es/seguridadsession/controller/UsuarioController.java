@@ -40,7 +40,7 @@ public class UsuarioController {
             cookie.setHttpOnly(true);
             cookie.setMaxAge(120); // 2 minutos
             response.addCookie(cookie);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(userLogin, HttpStatus.OK);
         } catch (BadRequestException e) {
             ErrorMsgForClient error = new ErrorMsgForClient(e.getMessage(), "/usuarios/login");
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -59,26 +59,17 @@ public class UsuarioController {
      * @param nuevoUser the nuevo user
      * @return the response entity
      */
-    @PostMapping("/") // -> http://localhost:8080/usuarios
+    @PostMapping // -> http://localhost:8080/usuarios
     public ResponseEntity<?> insert(@RequestBody UsuarioInsertDTO nuevoUser) {
         try {
-            usuarioService.insert(nuevoUser);
-            return new ResponseEntity<>(HttpStatus.OK);
+            UsuarioDTO user = usuarioService.insert(nuevoUser);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (BadRequestException e) {
             ErrorMsgForClient error = new ErrorMsgForClient(e.getMessage(), "/usuarios");
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            ErrorMsgForClient error = new ErrorMsgForClient("Error al crear el usuario", "/usuarios");
+            ErrorMsgForClient error = new ErrorMsgForClient(e.getMessage(), "/usuarios");
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
-
-    /*
-    {
-        "nombre": "admin",
-        "password": "admin",
-        "rol": "admin"
-    }
-     */
-
